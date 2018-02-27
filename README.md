@@ -8,7 +8,7 @@ For HPC environments that have ALL checks handled by this packaged (i.e. `handle
 
 For HPC environments that have a mix of checks (e.g. some handled by `handler-scontrol.rb` others handled by something else) you'll want to use the `handled_by_scontrol` convention (defined below). The script/handler (`handler-scontrol.rb`) specifically looks at whether or not sensu events exist for that client by querying the sensu events API. If you have two events, one handled by `handler-scontrol.rb` and one that isn't and the non-scontrol handled one clears first, then the second event, even if it clears, will never return the node to an undrain state.
 
-The reason we are querying the events API is because we never want a scenario where a node is prematurely returned to service when the actual issue isn't fixed.
+The reason we are querying the events API is because we never want a scenario where a node is prematurely returned to service (and allowing jobs to land on it) when the actual issue isn't fixed. Also, by setting a piece of arbitrary json data (like `handled_by_scontrol: true`) in our check definition, we make it easier for this handler/script to find its own events in the events API and run the handler accordingly so the node can be returned to service, despite there being other events that might exist (from checks that, say, might be for more informational purposes and have no bearing on the health state of a node).
 
 ### To use handler-scontrol in Sensu
 ### Define handler
